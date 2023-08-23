@@ -9,3 +9,140 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum RegistrationStatus {
+  CONFIRMED
+  INCOMPLETE
+  REMOVED
+}
+
+model User {
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  picture       String?
+  mobile        Int?
+  role          String[]
+  college       String
+  registrations Registration[]
+}
+
+model Events {
+  id                  String            @id @default(uuid())
+  name                String
+  venue               String
+  longdescription     String
+  shortdescription    String
+  timeline            JSON
+  startTime           DateTime
+  endTime             DateTime
+  poster              String
+  rules               String[]
+  technicalSociety    technicalSociety? @relation(fields: [technicalSocietyId], references: [Id], onDelete: Cascade)
+  technicalSocietyId  String?
+  eventCategories     eventCategories?  @relation(fields: [eventCategoriesId], references: [Id], onDelete: Cascade)
+  eventCategoriesId   String?
+  eventCoordinators   User[]            @relation(fields: [eventCategoriesId], references: [Id]) // TODO: Generate a FK constrtaint with the user table
+  eventCoordinatorsId String?
+}
+
+model Registration {
+  id           String             @id @default(uuid())
+  user         User               @relation(fields: [userId], references: [Id], onDelete: Cascade)
+  event        Events             @relation(fields: [eventId], references: [Id], onDelete: Cascade)
+  userId       String
+  eventId      String
+  status       RegistrationStatus
+  registeredAt DateTime           @default(now())
+
+  @@id([userId, eventId])
+}
+
+model eventCategories {
+  Id     String   @id @default(uuid())
+  type   String
+  imgUrl String
+  icon   String
+  events Events[]
+}
+
+model Sponsor {
+  id                  String             @id @default(uuid())
+  name                String
+  imageUrl            String
+  sponsorWebsite      String
+  sponsorCategories   sponsorCategories? @relation(fields: [sponsorCategoriesId], references: [Id])
+  sponsorCategoriesId String?
+}
+
+model sponsorCategories {
+  Id       String    @id @default(uuid())
+  category String
+  sponsors Sponsor[]
+}
+
+model technicalSociety {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  imageUrl    String
+  socials     Json // socials.json
+  event       Events[] // TODO: create a proper FK constraint using @relation decorator
+  admins      User[] // TODO: create a proper FK constraint using @relation decorator
+}
+
+model Lectures {
+  id        String @id @default(uuid())
+  name      String
+  longdesc  String
+  shortdesc String
+  imageUrl  String
+  time      Json // timeline.json
+  socials   Json // socials.json
+}
+
+// model Contributors {
+//   Id       String @id @default(uuid())
+//   role     String
+//   name     String
+//   year     String
+//   imgUrl   String
+//   linkedin String
+//   github   String
+//   insta    String
+// }
+
+// model appDevs {
+//   Id       String @id @default(uuid())
+//   role     String
+//   name     String
+//   year     String
+//   imgUrl   String
+//   linkedin String
+//   github   String
+//   insta    String
+// }
+
+// model facts {
+//   Id   String @id @default(uuid())
+//   fact String
+// }
+
+// model videos {
+//   Id  String @id @default(uuid())
+//   url String
+// }
+
+model FAQs {
+  id       String @id @default(uuid())
+  question String
+  answer   String
+}
+
+model Announcements {
+  id               String           @id @default(uuid())
+  content          String
+  time             DateTime
+  event            String
+  technicalSociety technicalSociety
+}

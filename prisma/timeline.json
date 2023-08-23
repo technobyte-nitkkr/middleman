@@ -1,0 +1,17 @@
+{
+    "name": "",
+    "society": "",
+    "timestamps": [{
+        "checkpoint": "registration open",
+        "startTime": "ISO date",
+        "endTime": "ISO Date"
+    }, {
+        "checkpoint": "registration close",
+        "startTime": "ISO Date",
+        "endTime": "ISO Date"
+    }, {
+        "checkpoint": "Submissions start",
+        "startTime": "",
+        "endTime": ""
+    }]
+}
