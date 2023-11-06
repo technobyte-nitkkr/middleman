@@ -6,7 +6,6 @@ const sampleData = require('../fixtures/sampledata'); // Adjust the path if nece
 
 async function seed() {
   const prisma = new PrismaClient();
-  // const transaction = await prisma.$transaction();
   try {
     for (const techSociety of sampleData.technicalSocieties) {
       await prisma.technicalSociety.upsert({
@@ -98,7 +97,6 @@ async function seed() {
 
     console.log('Sample data has been inserted successfully.');
   } catch (error) {
-    // await transaction.$rollback();
     console.error('Error seeding the database:', error);
   }
 }

@@ -20,7 +20,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:seed": "node prisma/seed.js",
-    "db:reset": "node prisma/reset.js"
+    "db:reset": "node prisma/reset.js",
+    "db:dev": "npm run db:reset && npm run db:seed",
+    "prisma:dev:deploy": "prisma migrate dev",
+    "db:container:rm": "docker compose rm postgres -s -f -v",
+    "db:container:up": "docker compose up -d"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
