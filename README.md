@@ -1,15 +1,21 @@
 # Basic Setup
 
-##Clone the repo
+## Clone the repo
 
 ```
 git clone https://github.com/technobyte-nitkkr/middleman
 ```
 
+Move into the repo and install the packages
+
+```
+cd middleman && npm i
+```
+
 ## Generate the env file
 
 ```
-cp env-sample .env
+cp env-example .env
 ```
 
 ## Start the Database
@@ -30,4 +36,12 @@ Seed the data
 
 ```
 npm run db:seed
+```
+
+## General Information
+
+While working, if you want to clean the data stored and seed the data again
+
+```
+npm run db:dev
 ```
