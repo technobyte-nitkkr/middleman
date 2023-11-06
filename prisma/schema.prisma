@@ -16,7 +16,6 @@ enum RegistrationStatus {
   REMOVED
 }
 
-// https://github.com/shy0980/middleman.git
 model User {
   id                 String            @id @default(uuid())
   name               String
@@ -34,7 +33,7 @@ model EventCoordinators {
   id                 String           @id @default(uuid())
   name               String
   email              String           @unique
-  password           String 
+  password           String
   technicalSociety   technicalSociety @relation(fields: [technicalSocietyId], references: [id])
   technicalSocietyId String
   eventsHandling     Events[]
@@ -97,12 +96,12 @@ model Sponsor {
   name                String
   imageUrl            String
   sponsorWebsite      String
-  sponsorCategories   sponsorCategories? @relation(fields: [sponsorCategoriesId], references: [Id])
+  sponsorCategories   sponsorCategories? @relation(fields: [sponsorCategoriesId], references: [id])
   sponsorCategoriesId String?
 }
 
 model sponsorCategories {
-  Id       String    @id @default(uuid())
+  id       String    @id @default(uuid())
   category String
   sponsors Sponsor[]
 }
