@@ -17,49 +17,74 @@ enum RegistrationStatus {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  name          String
-  email         String         @unique
-  picture       String?
-  mobile        Int?
-  role          String[]
-  college       String
-  registrations Registration[]
+  id                 String            @id @default(uuid())
+  name               String
+  email              String            @unique
+  password           String // added new
+  picture            String?
+  mobile             String?
+  college            String
+  Registration       Registration[]
+  technicalSociety   technicalSociety? @relation(fields: [technicalSocietyId], references: [id])
+  technicalSocietyId String?
+}
+
+model EventCoordinators {
+  id                 String           @id @default(uuid())
+  name               String
+  email              String           @unique
+  password           String
+  technicalSociety   technicalSociety @relation(fields: [technicalSocietyId], references: [id])
+  technicalSocietyId String
+  eventsHandling     Events[]
+  EventDoubts        EventDoubts[]
+}
+
+model EventDoubts {
+  id                  String            @id @default(uuid())
+  Question            String
+  Event               Events            @relation(fields: [eventsId], references: [id])
+  EventCoordinator    EventCoordinators @relation(fields: [eventCoordinatorsId], references: [id])
+  eventsId            String
+  eventCoordinatorsId String
 }
 
 model Events {
-  id                  String            @id @default(uuid())
-  name                String
-  venue               String
-  longdescription     String
-  shortdescription    String
-  timeline            JSON
-  startTime           DateTime
-  endTime             DateTime
-  poster              String
-  rules               String[]
-  technicalSociety    technicalSociety? @relation(fields: [technicalSocietyId], references: [Id], onDelete: Cascade)
-  technicalSocietyId  String?
-  eventCategories     eventCategories?  @relation(fields: [eventCategoriesId], references: [Id], onDelete: Cascade)
+  id               String   @id @default(uuid())
+  name             String
+  venue            String
+  longdescription  String
+  shortdescription String
+  timeline         Json
+  startTime        DateTime
+  endTime          DateTime
+  poster           String
+  rules            String[]
+
+  Registration        Registration[]
+  eventCategories     eventCategories?   @relation(fields: [eventCategoriesId], references: [id])
   eventCategoriesId   String?
-  eventCoordinators   User[]            @relation(fields: [eventCategoriesId], references: [Id]) // TODO: Generate a FK constrtaint with the user table
+  technicalSociety    technicalSociety?  @relation(fields: [technicalSocietyId], references: [id])
+  technicalSocietyId  String?
+  EventCoordinators   EventCoordinators? @relation(fields: [eventCoordinatorsId], references: [id])
   eventCoordinatorsId String?
+  EventDoubts         EventDoubts[]
 }
 
 model Registration {
   id           String             @id @default(uuid())
-  user         User               @relation(fields: [userId], references: [Id], onDelete: Cascade)
-  event        Events             @relation(fields: [eventId], references: [Id], onDelete: Cascade)
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event        Events             @relation(fields: [eventId], references: [id], onDelete: Cascade)
   userId       String
   eventId      String
   status       RegistrationStatus
   registeredAt DateTime           @default(now())
 
-  @@id([userId, eventId])
+  @@unique([userId, eventId])
 }
 
 model eventCategories {
-  Id     String   @id @default(uuid())
+  id     String   @id @default(uuid())
   type   String
   imgUrl String
   icon   String
@@ -71,24 +96,26 @@ model Sponsor {
   name                String
   imageUrl            String
   sponsorWebsite      String
-  sponsorCategories   sponsorCategories? @relation(fields: [sponsorCategoriesId], references: [Id])
+  sponsorCategories   sponsorCategories? @relation(fields: [sponsorCategoriesId], references: [id])
   sponsorCategoriesId String?
 }
 
 model sponsorCategories {
-  Id       String    @id @default(uuid())
+  id       String    @id @default(uuid())
   category String
   sponsors Sponsor[]
 }
 
 model technicalSociety {
-  id          String   @id @default(uuid())
-  name        String
-  description String
-  imageUrl    String
-  socials     Json // socials.json
-  event       Events[] // TODO: create a proper FK constraint using @relation decorator
-  admins      User[] // TODO: create a proper FK constraint using @relation decorator
+  id                String              @id @default(uuid())
+  name              String
+  description       String
+  imageUrl          String
+  socials           Json // socials.json
+  event             Events[] // TODO: create a proper FK constraint using @relation decorator
+  Announcements     Announcements[]
+  EventCoordinators EventCoordinators[]
+  User              User[]
 }
 
 model Lectures {
@@ -97,41 +124,9 @@ model Lectures {
   longdesc  String
   shortdesc String
   imageUrl  String
-  time      Json // timeline.json
+  timeline  Json // timeline.json
   socials   Json // socials.json
 }
-
-// model Contributors {
-//   Id       String @id @default(uuid())
-//   role     String
-//   name     String
-//   year     String
-//   imgUrl   String
-//   linkedin String
-//   github   String
-//   insta    String
-// }
-
-// model appDevs {
-//   Id       String @id @default(uuid())
-//   role     String
-//   name     String
-//   year     String
-//   imgUrl   String
-//   linkedin String
-//   github   String
-//   insta    String
-// }
-
-// model facts {
-//   Id   String @id @default(uuid())
-//   fact String
-// }
-
-// model videos {
-//   Id  String @id @default(uuid())
-//   url String
-// }
 
 model FAQs {
   id       String @id @default(uuid())
@@ -140,9 +135,10 @@ model FAQs {
 }
 
 model Announcements {
-  id               String           @id @default(uuid())
-  content          String
-  time             DateTime
-  event            String
-  technicalSociety technicalSociety
+  id                 String           @id @default(uuid())
+  content            String
+  time               DateTime
+  event              String
+  technicalSociety   technicalSociety @relation(fields: [technicalSocietyId], references: [id])
+  technicalSocietyId String
 }
