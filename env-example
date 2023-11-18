@@ -3,5 +3,7 @@ PORT=3000
 DATABASE_PORT=5432
 DATABASE_USERNAME=postgres
 DATABASE_PASSWORD=pass
-DATABASE_NAME=backend
-DATABASE_URL="postgresql://postgres:pass@0.0.0.0:5432/backend?schema=public"
+DATABASE_NAME=db
+DATABASE_URL="postgresql://postgres:pass@0.0.0.0:5432/db?schema=public"
+
+FUSIONAUTH_APP_MEMORY=512m
