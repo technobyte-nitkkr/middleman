@@ -4,32 +4,39 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserDto } from './dto';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+
+interface InputUser {
+  name: string;
+  email: string;
+  picture: string;
+}
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+    private config: ConfigService,
+  ) {}
 
-  async signIn(user) {
+  async signIn(user: UserDto) {
     if (!user) {
       throw new BadRequestException('No user');
     }
 
     const userExists = await this.findUserByEmail(user.email);
 
-    if (!userExists) {
-      const filteredUser = this.filterUserFields(user);
-      const registeredUser = await this.registerUser(filteredUser);
-
-      return {
-        message: 'User Info from google',
-        user: registeredUser,
-      };
+    if (userExists) {
+      return this.signToken(user.email, user.name, true);
     }
 
-    return {
-      message: 'User Info from google',
-      user: user,
-    };
+    const filteredUser = this.filterUserFields(user) as InputUser;
+
+    await this.registerUser(filteredUser);
+    return this.signToken(user.email, user.name, false);
   }
 
   async findUserByEmail(email: string) {
@@ -46,23 +53,18 @@ export class AuthService {
     }
   }
 
-  async registerUser(user) {
-    console.log('going to register the fucker');
+  async registerUser(user: InputUser) {
     try {
-      const newUser = await this.prisma.user.upsert({
-        where: { email: user.email },
-        create: user,
-        update: {},
+      const newUser = await this.prisma.user.create({
+        data: user,
       });
-      console.log('added a new user');
-      console.log(newUser);
       return newUser;
     } catch (error) {
       console.log(error);
     }
   }
 
-  private filterUserFields(user) {
+  private filterUserFields(user: UserDto) {
     const allowedFields = ['email', 'name', 'picture'];
     return Object.keys(user)
       .filter((key) => allowedFields.includes(key))
@@ -70,5 +72,24 @@ export class AuthService {
         obj[key] = user[key];
         return obj;
       }, {});
+  }
+
+  async signToken(
+    email: string,
+    name: string,
+    userExists: boolean,
+  ): Promise<{ access_token: string }> {
+    const payload = {
+      email: email,
+      name: name,
+      userExists: userExists,
+    };
+
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: '600m',
+      secret: this.config.get('JWT_SECRET'),
+    });
+
+    return { access_token: token };
   }
 }
