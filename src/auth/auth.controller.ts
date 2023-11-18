@@ -15,7 +15,5 @@ export class AuthController {
   @UseGuards(GoogleGuard)
   async googleAuthCallback(@Req() req) {
     return this.authService.signIn(req.user);
-
-    return 'OK';
   }
 }

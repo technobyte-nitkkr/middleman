@@ -17,16 +17,13 @@ enum RegistrationStatus {
 }
 
 model User {
-  id                 String            @id @default(uuid())
-  name               String
-  email              String            @unique
-  password           String // added new
-  picture            String?
-  mobile             String?
-  college            String
-  Registration       Registration[]
-  technicalSociety   technicalSociety? @relation(fields: [technicalSocietyId], references: [id])
-  technicalSocietyId String?
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  picture      String?
+  mobile       String?
+  college      String?
+  Registration Registration[]
 }
 
 model EventCoordinators {
@@ -115,7 +112,6 @@ model technicalSociety {
   event             Events[] // TODO: create a proper FK constraint using @relation decorator
   Announcements     Announcements[]
   EventCoordinators EventCoordinators[]
-  User              User[]
 }
 
 model Lectures {
