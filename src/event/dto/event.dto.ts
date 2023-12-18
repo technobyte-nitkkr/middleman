@@ -1,5 +1,3 @@
-// /dto/event.dto.ts
-
 export class EventDto {
     readonly name: string;
     readonly venue: string;
@@ -12,10 +10,3 @@ export class EventDto {
     readonly rules: string[];
 }
 
-export class EventCategoryDto {
-    readonly type: string;
-    readonly imgUrl: string;
-    readonly icon: string;
-}
-
-// You can create DTOs for other models as needed.

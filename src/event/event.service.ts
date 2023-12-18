@@ -1,7 +1,7 @@
 // /event.service.ts
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { EventCategoryDto, EventDto } from './dto';
+import { EventDto } from './dto';
 
 @Injectable()
 export class EventService {
@@ -17,15 +17,28 @@ export class EventService {
         });
     }
 
+    async updateEvent(eventId: string, eventDto: EventDto) {
+        return this.prisma.events.update({
+            where: { id: eventId },
+            data: eventDto,
+        });
+    }
+
     async getAllEventCategories() {
         return this.prisma.eventCategories.findMany();
     }
 
-    async createEventCategory(eventCategoryDto: EventCategoryDto) {
-        return this.prisma.eventCategories.create({
-            data: eventCategoryDto,
+    async getAllEventDescriptions(eventId: string) {
+        return this.prisma.events.findUnique({
+            where: { id: eventId },
+            select: { longdescription: true }, // Include only the 'longdescription' field
         });
     }
 
-    // Implement other service methods as needed.
+    async getAllEventTimeline(eventId: string) {
+        return this.prisma.events.findUnique({
+            where: { id: eventId },
+            select: { timeline: true }, // Include only the 'timeline' field
+        });
+    }
 }
