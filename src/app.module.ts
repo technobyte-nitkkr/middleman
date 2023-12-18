@@ -8,6 +8,9 @@ import { ConfigModule } from '@nestjs/config';
 import { GoogleStrategy } from './auth/strategy';
 import { PrismaModule } from './prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
+import { EventController } from './event/event.controller';
+import { EventModule } from './event/event.module';
+import { EventService } from './event/event.service';
 
 @Module({
   imports: [
@@ -15,10 +18,11 @@ import { JwtModule } from '@nestjs/jwt';
       isGlobal: true,
     }),
     AuthModule,
+    EventModule,
     PrismaModule,
     JwtModule.register({}),
   ],
-  controllers: [AppController, AuthController],
-  providers: [AppService, AuthService, GoogleStrategy],
+  controllers: [AppController, AuthController, EventController],
+  providers: [AppService, AuthService, GoogleStrategy, EventService],
 })
-export class AppModule {}
+export class AppModule { }
